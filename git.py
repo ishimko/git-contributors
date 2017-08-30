@@ -3,6 +3,15 @@ from subprocess import check_output
 import os
 import re
 
+class UserStatistics:
+    def __init__(self):
+        self.files = 0
+        self.insertions = 0
+        self.deletions = 0
+
+    def __repr__(self):
+        return "files changed: {}, insertions: {}, deletions: {}".format(self.files, self.insertions, self.deletions)
+
 class Git:
     STAT_LINE_PATTERN_FAST = re.compile(r".*?fil(e|es) changed.*?")
     STAT_LINE_PATTERN_FULL = re.compile( r".*?(\d+) files? changed(?:, (\d+) insertions?\(\+\))?(?:, (\d+) deletions?)?.*?")
@@ -24,25 +33,16 @@ class Git:
         return result
 
     def get_contributor_stat(self, contributor):
-        result = {
-            "files" : 0,
-            "insertions": 0,
-            "deletions": 0
-        }
+        result = UserStatistics()
         output = self._git("log", "--shortstat", "--oneline", "--author", contributor)
         stat_lines = filter(lambda x: not x.startswith(' '*4) and Git.STAT_LINE_PATTERN_FAST.match(x), output.split('\n'))
-        
+
         for line in stat_lines:
             match = Git.STAT_LINE_PATTERN_FULL.match(line)
             if match:
-                files = int(match.group(1))
-                insertions = match.group(2)
-                deletions = match.group(3)
-                result['files'] += files
-                if insertions is not None:
-                    result['insertions'] += int(insertions)
-                if deletions is not None:
-                    result['deletions'] += int(deletions)
+                result.files += int(match.group(1))
+                result.insertions += int(match.group(2) or 0)
+                result.deletions += int(match.group(3) or 0)
         return result
 
     def _git(self, *argv):
