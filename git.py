@@ -40,7 +40,7 @@ class Git:
                 result.add_user(name=name, email=email)
         return result.users
 
-    def get_contributor_stat(self, contributor):
+    def get_user_statistics(self, contributor):
         result = UserStatistics()
         for email in contributor.emails:
             output = self._git("log", "--shortstat", "--oneline", "--author", email)
@@ -52,6 +52,14 @@ class Git:
                     result.files += int(match.group(1))
                     result.insertions += int(match.group(2) or 0)
                     result.deletions += int(match.group(3) or 0)
+        return result
+
+    def get_contribution_statistics(self, ignore_zeros=True):
+        result = {}
+        for user in self.get_contributors():
+            user_statistics = self.get_user_statistics(user)        
+            if (ignore_zeros and not user_statistics.is_zero) or not ignore_zeros:                
+                result[user] = user_statistics            
         return result
 
     def _git(self, *argv):
