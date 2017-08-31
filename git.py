@@ -54,13 +54,11 @@ class Git:
                     result.deletions += int(match.group(3) or 0)
         return result
 
-    def get_contribution_statistics(self, ignore_zeros=True):
-        result = {}
+    def get_contribution_statistics(self, include_zeros=True):
         for user in self.get_contributors():
-            user_statistics = self.get_user_statistics(user)        
-            if (ignore_zeros and not user_statistics.is_zero) or not ignore_zeros:                
-                result[user] = user_statistics            
-        return result
+            user_statistics = self.get_user_statistics(user)
+            if not user_statistics.is_zero or include_zeros:
+                yield (user, user_statistics)
 
     def _git(self, *argv):
         command = self.git_command + list(argv)
