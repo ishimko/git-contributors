@@ -9,8 +9,8 @@ class User:
     def add_email(self, email):
         self.emails.add(email)
 
-    def __repr__(self):
-        names_repr = self._repr_strings(self.names,  ('(', ')'))
+    def __str__(self):
+        names_repr = self._repr_strings(self.names, ('(', ')'))
         emails_repr = self._repr_strings(self.emails)
         return '{} <{}>'.format(names_repr, emails_repr)
 
