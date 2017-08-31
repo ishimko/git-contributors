@@ -1,9 +1,11 @@
-import subprocess
-from subprocess import check_output
 import os
 import re
-from user import User
-from user_statistics import UserStatistics
+import subprocess
+from subprocess import check_output
+
+from .user import User
+from .user_statistics import UserStatistics
+
 
 class _UsersBuilder:
     def __init__(self):

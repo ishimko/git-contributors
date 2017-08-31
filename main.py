@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 
-from git import Git
+from git_contributors.git import Git
 
 
 def main():
